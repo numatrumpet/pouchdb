@@ -60,7 +60,6 @@
     "level": false,
     "path": false,
     "fs": false,
-    "events": false,
     "crypto": false,
     "bluebird": "lie"
   }
