@@ -9,9 +9,10 @@ adapters.map(function (adapter) {
 
     var dbs = {};
 
-    beforeEach(function () {
+    beforeEach(function (done) {
       dbs.name = testUtils.adapterUrl(adapter, 'test_changes');
       dbs.remote = testUtils.adapterUrl(adapter, 'test_changes_remote');
+      testUtils.cleanup([dbs.name, dbs.remote], done);
     });
 
     afterEach(function (done) {
@@ -618,6 +619,32 @@ adapters.map(function (adapter) {
       var db = new PouchDB(dbs.name);
       var count = 0;
       var changes = db.changes({
+        complete: function (err, result) {
+          result.status.should.equal('cancelled');
+          // This setTimeout ensures that once we cancel a change we dont recieve
+          // subsequent callbacks, so it is needed
+          setTimeout(function () {
+            count.should.equal(1);
+            done();
+          }, 200);
+        },
+        onChange: function (change) {
+          count += 1;
+          if (count === 1) {
+            changes.cancel();
+            db.post({ test: 'another doc' });
+          }
+        },
+        continuous: true
+      });
+      db.post({ test: 'adoc' });
+    });
+
+    it('Cancel changes latest', function (done) {
+      var db = new PouchDB(dbs.name);
+      var count = 0;
+      var changes = db.changes({
+        since: 'latest',
         complete: function (err, result) {
           result.status.should.equal('cancelled');
           // This setTimeout ensures that once we cancel a change we dont recieve
