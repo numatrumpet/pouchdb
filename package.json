@@ -23,7 +23,8 @@
     "level-sublevel": "~5.2.0",
     "levelup": "~0.18.2",
     "leveldown": "~0.10.2",
-    "inherits": "~2.0.1"
+    "inherits": "~2.0.1",
+    "level-js": "~1.1.2"
   },
   "devDependencies": {
     "commander": "~2.1.0",
@@ -58,14 +59,8 @@
     "coverage": "COVERAGE=1 ./bin/run-mocha.sh"
   },
   "browser": {
-    "./adapters/leveldb": false,
-    "./deps/buffer": false,
     "request": false,
-    "levelup": false,
-    "leveldown": false,
-    "events": false,
-    "crypto": false,
-    "bluebird": "lie",
-    "level-sublevel": false
+    "leveldown": "level-js",
+    "bluebird": "lie"
   }
 }
